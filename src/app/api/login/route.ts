@@ -1,9 +1,10 @@
 import User from "@/models/User";
 import connect from "@/lib/mongodb";
+import jwt from "jsonwebtoken";
 
 export async function POST(request: Request) {
-    try{
-        const { email, password } = await request.json()
+    try {
+        const { email, password } = await request.json();
 
         await connect();
 
@@ -12,17 +13,27 @@ export async function POST(request: Request) {
         if (!existingUser) {
             return new Response('Invalid credentials', { status: 400 });
         }
-        const compare = await existingUser.comparePassword(password)
 
-        // invalid password
-        if(!compare){
+        // Compare password
+        const isPasswordCorrect = await existingUser.comparePassword(password);
+        if (!isPasswordCorrect) {
             return new Response('Invalid credentials', { status: 400 });
         }
 
-        // log user in, send jwt
-        return new Response('Logged in!', { status: 200 })
+        // Create JWT Token
+        const token = jwt.sign(
+            { userId: existingUser._id, email: existingUser.email },
+            process.env.JWT_SECRET ?? '',
+            { expiresIn: '1h' }
+        );
+
+        // Send response with token
+        return new Response(JSON.stringify({ message: 'Logged in successfully', token }), {
+            status: 200,
+            headers: { 'Content-Type': 'application/json' }
+        });
     } catch (error) {
         console.error("Error during log in:", error);
         return new Response('Error logging in', { status: 500 });
-  }
+    }
 }
