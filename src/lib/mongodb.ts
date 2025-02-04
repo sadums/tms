@@ -3,10 +3,9 @@ import mongoose from "mongoose";
 const uri: string = process.env.MONGO_URI ?? '';
 
 export default async function connect() {
-    // Check if MONGO_URI is defined and valid
     if (!uri) {
         console.error("MONGO_URI is not defined. Please check your environment variables.");
-        process.exit(1); // Exit the process if no URI is provided
+        process.exit(1);
     }
 
     try {
@@ -14,7 +13,6 @@ export default async function connect() {
         await mongoose.connect(uri);
         console.log("Mongoose connected");
 
-        // Optional: Add event listeners to mongoose connection for more detailed error handling
         mongoose.connection.on('connected', () => {
             console.log('Mongoose connection established.');
         });
@@ -29,6 +27,6 @@ export default async function connect() {
 
     } catch (e) {
         console.error("Error connecting to MongoDB:", e);
-        process.exit(1);  // Exit the process if connection fails
+        process.exit(1);
     }
 }

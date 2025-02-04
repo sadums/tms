@@ -1,6 +1,6 @@
 import User from '@/models/User'
 import connect from "@/lib/mongodb";
-import jwt from "jsonwebtoken";
+
  
 export async function POST(request: Request) {
   try {
@@ -29,17 +29,8 @@ export async function POST(request: Request) {
 
     console.log('User created:', user);
 
-    // Create JWT Token
-    const token = jwt.sign(
-        { userId: user._id, email: user.email },
-        process.env.JWT_SECRET ?? '',
-        { expiresIn: '1h' }
-    );
-
-    // Send response with token
-    return new Response(JSON.stringify({ message: 'Signed up successfully', token }), {
-        status: 200,
-        headers: { 'Content-Type': 'application/json' }
+    return new Response('User created successfully', {
+      status: 200
     });
   } catch (error) {
     console.error("Error during user creation:", error);
