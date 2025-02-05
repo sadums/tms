@@ -1,11 +1,20 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
-import { cookies } from 'next/headers'
-import { getSession } from '@/lib/auth'
+import { getSession, updateSession } from '@/lib/auth'
  
 
 export async function middleware(request: NextRequest) {
-  console.log(getSession())
+  const session = await getSession()
+  if(session){
+    updateSession()
+    if(request.nextUrl.pathname == '/login' || request.nextUrl.pathname == '/signup'){
+      return NextResponse.redirect(new URL('/', request.url))
+    }
+  }else{
+    if(request.nextUrl.pathname != '/login' && request.nextUrl.pathname != '/signup'){
+      return NextResponse.redirect(new URL('/login', request.url))
+    }
+  }
 }
 
 export const config = {

@@ -1,5 +1,6 @@
 import User from "@/models/User";
 import connect from "@/lib/mongodb";
+import { NextResponse } from 'next/server'
 import { createSession } from "@/lib/auth";
 
 export async function POST(request: Request) {
@@ -18,11 +19,8 @@ export async function POST(request: Request) {
         if (!isPasswordCorrect) {
             return new Response('Invalid credentials', { status: 400 });
         }
-
-        createSession(email);
-        return new Response(JSON.stringify({ message: 'Logged in successfully'}), {
-            status: 200
-        });
+        await createSession(email);
+        return NextResponse.redirect(new URL('/', request.url))
     } catch (error) {
         console.error("Error during log in:", error);
         return new Response('Error logging in', { status: 500 });
