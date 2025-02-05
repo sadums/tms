@@ -1,3 +1,4 @@
+'use server'
 import User from "@/models/User";
 import connect from "@/lib/mongodb";
 import { NextResponse } from 'next/server'
@@ -11,18 +12,18 @@ export async function POST(request: Request) {
         // Check if the user already exists
         const existingUser = await User.findOne({ email });
         if (!existingUser) {
-            return new Response('Invalid credentials', { status: 400 });
+            return NextResponse.json({ error: 'User with this email does not exist' }, { status: 400 });
         }
 
         // Compare password
         const isPasswordCorrect = await existingUser.comparePassword(password);
         if (!isPasswordCorrect) {
-            return new Response('Invalid credentials', { status: 400 });
+            return NextResponse.json({ error: 'Invalid credentials' }, { status: 400 });
         }
         await createSession(email);
-        return NextResponse.redirect(new URL('/', request.url))
+        return NextResponse.json({ error: 'Sign up successful' }, { status: 200 })
     } catch (error) {
         console.error("Error during log in:", error);
-        return new Response('Error logging in', { status: 500 });
+        return NextResponse.json({ error: 'Error during log in' }, { status: 500 });
     }
 }

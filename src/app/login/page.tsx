@@ -1,12 +1,13 @@
-// pages/login.js
 'use client'
+
+import { useRouter } from 'next/navigation'
 import { useState } from 'react';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-
+  const router = useRouter()
   const handleLogin = async (e: any) => {
     e.preventDefault();
     
@@ -19,10 +20,10 @@ const LoginPage = () => {
     });
 
     if (res.ok) {
-      const data = await res.json();
+      router.push('/')
     } else {
       const errorData = await res.json();
-      setError(errorData.message || 'Something went wrong');
+      setError(errorData.error || 'Something went wrong');
     }
   };
 

@@ -1,5 +1,6 @@
-// pages/login.js
 'use client'
+
+import { useRouter } from 'next/navigation'
 import { useState } from 'react';
 
 const SignupPage = () => {
@@ -7,17 +8,17 @@ const SignupPage = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
-
+  const router = useRouter()
   const handleSignup = async (e: any) => {
-    if(password != confirmPassword){
+    e.preventDefault();
+    if(password !== confirmPassword){
         setError('Passwords do not match');
-        return
+        return;
     }
     if(password.length < 8){
-        setError('Password must be at least 8 characters')
-        return
+        setError('Password must be at least 8 characters');
+        return;
     }
-    e.preventDefault();
     
     const res = await fetch('/api/signup', {
       method: 'POST',
@@ -28,10 +29,10 @@ const SignupPage = () => {
     });
 
     if (res.ok) {
-      const data = await res.json();
+      router.push('/')
     } else {
       const errorData = await res.json();
-      setError(errorData.message || 'Something went wrong');
+      setError(errorData.error || 'Something went wrong');
     }
   };
 
@@ -60,10 +61,10 @@ const SignupPage = () => {
           />
         </div>
         <div>
-          <label htmlFor="password">Confirm Password</label>
+          <label htmlFor="confirmPassword">Confirm Password</label>
           <input
             id="confirmPassword"
-            type="confirmPassword"
+            type="password"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             required
