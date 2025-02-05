@@ -1,5 +1,6 @@
 import User from '@/models/User'
 import connect from "@/lib/mongodb";
+import { NextResponse } from 'next/server'
 import { createSession } from "@/lib/auth";
 
  
@@ -30,9 +31,7 @@ export async function POST(request: Request) {
 
     console.log('User created:', user);
     createSession(email);
-    return new Response('User created successfully', {
-      status: 200
-    });
+    return NextResponse.redirect(new URL('/', request.url))
   } catch (error) {
     console.error("Error during user creation:", error);
     return new Response('Error creating user', { status: 500 });
