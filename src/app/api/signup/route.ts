@@ -1,5 +1,6 @@
 import User from '@/models/User'
 import connect from "@/lib/mongodb";
+import { createSession } from "@/lib/auth";
 
  
 export async function POST(request: Request) {
@@ -28,7 +29,7 @@ export async function POST(request: Request) {
     await user.save();
 
     console.log('User created:', user);
-
+    createSession(email);
     return new Response('User created successfully', {
       status: 200
     });
